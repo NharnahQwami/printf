@@ -1,3 +1,6 @@
+/** Authors: Desmond Dadzie
+ *           Fosuhemaa Apenteng
+ */
 #include "main.h"
 
 /**
