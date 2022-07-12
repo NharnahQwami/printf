@@ -1,7 +1,7 @@
    
 /*
  * File: print_ch.c
- * Auth: Fosuhemaa & Desmond
+ * Auth: Fosuhemaa Apenteng & Desmond Dadzie
  */
 
 #include "main.h"
