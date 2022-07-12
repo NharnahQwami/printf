@@ -1,3 +1,6 @@
+/** Authors: Desmond Dadzie
+ *           Fosuhemaa Apenteng
+ */
 #ifndef MAIN_H
 #define MAIN_H
 
