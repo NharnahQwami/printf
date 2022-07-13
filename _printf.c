@@ -3,49 +3,50 @@
  *          Fosuhemaa Apenteng
  */
 #include "main.h"
-
 /**
- * _printf - produces output according to a format
- * @format: format string containing the characters and the specifiers
- * Description: this function will call the get_print() function that will
- * determine which printing function to call depending on the conversion
- * specifiers contained into fmt
- * Return: length of the formatted output string
+ * _printf - a replica of printf. Prints out a formatted string to the stdout
+ * @format: the string to be formatted
+ * Return: the length of the formatted string
  */
 int _printf(const char *format, ...)
 {
-	int (*pfunc)(va_list, flags_t *);
-	const char *p;
-	va_list arguments;
-	flags_t flags = {0, 0, 0};
+	int len, i = 0;
+	char *str;
+	va_list list;
 
-	register int count = 0;
+	va_start(list, format);
+	len = strlen(format);
+	str = malloc(sizeof(format) * len);
 
-	va_start(arguments, format);
-	if (!format || (format[0] == '%' && !format[1]))
-		return (-1);
-	if (format[0] == '%' && format[1] == ' ' && !format[2])
-		return (-1);
-	for (p = format; *p; p++)
+	while (i < len)
 	{
-		if (*p == '%')
-		{
-			p++;
-			if (*p == '%')
-			{
-				count += _putchar('%');
-				continue;
-			}
-			while (get_flag(*p, &flags))
-				p++;
-			pfunc = get_print(*p);
-			count += (pfunc)
-				? pfunc(arguments, &flags)
-				: _printf("%%%c", *p);
-		} else
-			count += _putchar(*p);
+		str[i] = format[i];
+		i++;
 	}
-	_putchar(-1);
-	va_end(arguments);
-	return (count);
+	for (i = 0; i < len; i++)
+	{
+		if (str[i] == '%' && str[i] != '\0')
+		{
+			i++;
+			if (str[i] == 'c')
+			{
+				_putchar(va_arg(list, int));
+			}
+			else if (str[i] == 'd' || str[i] == 'i')
+			{
+				print_number(va_arg(list, int));
+			}
+			else if (str[i] == 's')
+			{
+				print_string(va_arg(list, char*));
+			}
+			else if (str[i] == '%')
+				_putchar('%');
+		}
+		else
+			_putchar(str[i]);
+	}
+	str[len] = '\0';
+	va_end(list);
+	return (i);
 }
