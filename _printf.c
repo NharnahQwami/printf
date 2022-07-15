@@ -1,52 +1,51 @@
-/**
- * Authors: Desmond Dadzie
- *          Fosuhemaa Apenteng
- */
 #include "main.h"
+
 /**
- * _printf - a replica of printf. Prints out a formatted string to the stdout
- * @format: the string to be formatted
- * Return: the length of the formatted string
+ * _printf - formatted output conversion and print data.
+ * @format: input string.
+ *
+ * Return: number of chars printed.
  */
 int _printf(const char *format, ...)
 {
-	int len, i = 0;
-	char *str;
-	va_list list;
+	unsigned int i = 0, len = 0, ibuf = 0;
+	va_list arguments;
+	int (*function)(va_list, char *, unsigned int);
+	char *buffer;
 
-	va_start(list, format);
-	len = strlen(format);
-	str = malloc(sizeof(format) * len);
-
-	while (i < len)
+	va_start(arguments, format), buffer = malloc(sizeof(char) * 1024);
+	if (!format || !buffer || (format[i] == '%' && !format[i + 1]))
+		return (-1);
+	if (!format[i])
+		return (0);
+	for (i = 0; format && format[i]; i++)
 	{
-		str[i] = format[i];
-		i++;
-	}
-	for (i = 0; i < len; i++)
-	{
-		if (str[i] == '%' && str[i] != '\0')
+		if (format[i] == '%')
 		{
-			i++;
-			if (str[i] == 'c')
-			{
-				_putchar(va_arg(list, int));
+			if (format[i + 1] == '\0')
+			{	print_buf(buffer, ibuf), free(buffer), va_end(arguments);
+				return (-1);
 			}
-			else if (str[i] == 'd' || str[i] == 'i')
-			{
-				print_number(va_arg(list, int));
-			}
-			else if (str[i] == 's')
-			{
-				print_string(va_arg(list, char*));
-			}
-			else if (str[i] == '%')
-				_putchar('%');
+			else
+			{	function = get_print_func(format, i + 1);
+				if (function == NULL)
+				{
+					if (format[i + 1] == ' ' && !format[i + 2])
+						return (-1);
+					handl_buf(buffer, format[i], ibuf), len++, i--;
+				}
+				else
+				{
+					len += function(arguments, buffer, ibuf);
+					i += ev_print_func(format, i + 1);
+				}
+			} i++;
 		}
 		else
-			_putchar(str[i]);
+			handl_buf(buffer, format[i], ibuf), len++;
+		for (ibuf = len; ibuf > 1024; ibuf -= 1024)
+			;
 	}
-	str[len] = '\0';
-	va_end(list);
-	return (i);
+	print_buf(buffer, ibuf), free(buffer), va_end(arguments);
+	return (len);
 }
